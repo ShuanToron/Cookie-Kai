@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/layout-dashboard}"
+>
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .row {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+    </style>
+</head>
+<body>
+<div class="container" layout:fragment="content">
+    <div class="card">
+        <div class="card-body">
+            <h2 class="text-center mb-4">Create new role</h2>
+            <form action="/admin/roles/save" th:object="${roles}" method="post"
+                  onsubmit="return confirm('Do you want to create new role?')">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="form-group mb-3">
+                                    <label class="form-label" style="margin-left: 10px">Name</label>
+                                    <input class="form-control custom-shadow custom-radius border-1 bg-white"
+                                           type="text" placeholder="Please type name of role" th:field="*{name}"
+                                           style="height: 50px">
+                                    <span th:if="${#fields.hasErrors('name')}" style="color: red; font-size: 15px"
+                                          th:errors="*{name}"></span>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="form-group mb-3">
+                                    <label class="form-label" style="margin-left: 10px">Description</label>
+                                    <input class="form-control custom-shadow custom-radius border-1 bg-white"
+                                           type="text" placeholder="Please type description" th:field="*{description}"
+                                           style="height: 50px">
+                                    <span th:if="${#fields.hasErrors('description')}"
+                                          style="color: red; font-size: 15px"
+                                          th:errors="*{description}"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-12" style="text-align: center; padding-top: 1rem">
+                        <button type="submit" class="btn btn-success">Add</button>
+                        <button type="button" class="btn btn-success" id="buttonCancel">Cancel</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script th:inline="javascript">
+    $(document).ready(function () {
+        $("#buttonCancel").on("click", function () {
+            window.location = "[[@{admin/roles}]]";
+        })
+    });
+</script>
+</body>
+</html>
