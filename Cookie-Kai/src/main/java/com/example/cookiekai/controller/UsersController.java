@@ -53,7 +53,7 @@ public class UsersController {
         } else if (!file.isEmpty()) {
             String fileName = StringUtils.cleanPath(file.getOriginalFilename());
             users.setPhotos(fileName);
-            Users savedUser = usersService.addUser(users);
+            Users savedUser = usersService.addOrUpdateUser(users);
             String uploadDirectory = "user-photos/" + savedUser.getId();
             FileUploadUtil.saveFile(uploadDirectory, fileName, file);
         }
@@ -84,12 +84,12 @@ public class UsersController {
         } else if (!file.isEmpty()) {
             String fileName = StringUtils.cleanPath(file.getOriginalFilename());
             users.setPhotos(fileName);
-            Users savedUser = usersService.updateUser(users);
+            Users savedUser = usersService.addOrUpdateUser(users);
             String uploadDirectory = "user-photos/" + savedUser.getId();
             FileUploadUtil.cleanDirectory(uploadDirectory);
             FileUploadUtil.saveFile(uploadDirectory, fileName, file);
         } else {
-            usersService.updateUser(users);
+            usersService.addOrUpdateUser(users);
         }
         session.setAttribute("message", "Save user successfully");
         return "redirect:/admin/users";

@@ -67,6 +67,11 @@ public class Users {
     @JoinColumn(name = "user_role", referencedColumnName = "id")
     private Roles roles;
 
+    @Override
+    public String toString() {
+        return "Fullname; " + fullname + ", email: " + email + " role: " + roles.getName() + ", birthday: " + birthday + ", phonenumber: " + phoneNumber;
+    }
+
     @Transient
     public String getImagePath() {
         if (id == null || photos == null) return "/dashboard/assets/img/img.png";

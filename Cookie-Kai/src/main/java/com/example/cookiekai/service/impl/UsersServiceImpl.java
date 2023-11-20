@@ -28,7 +28,7 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
-    public Users addUser(Users users) {
+    public Users addOrUpdateUser(Users users) {
         String encodePassword = encoder.encode(users.getPassword());
         users.setPassword(encodePassword);
         return usersRepository.save(users);
@@ -44,10 +44,19 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
-    public Users updateUser(Users users) {
-        String encodePassword = encoder.encode(users.getPassword());
-        users.setPassword(encodePassword);
-        return usersRepository.save(users);
+    public Users updateAccount(Users usersForm) {
+        Users usersDB = getOne(usersForm.getId());
+        if (!usersForm.getPassword().isEmpty()) {
+            String encodePassword = encoder.encode(usersDB.getPassword());
+            usersForm.setPassword(encodePassword);
+        }
+        if (!usersForm.getPhotos().isEmpty()) {
+            usersForm.setPhotos(usersDB.getPhotos());
+        }
+        if (!usersForm.getFullname().isEmpty()) {
+            usersForm.setFullname(usersDB.getFullname());
+        }
+        return usersRepository.save(usersDB);
     }
 
     @Override
@@ -69,5 +78,10 @@ public class UsersServiceImpl implements UsersService {
     public Boolean isUnique(String email) {
         Users users = usersRepository.searchDuplicate(email);
         return users == null;
+    }
+
+    @Override
+    public Users getByEmail(String email) {
+        return usersRepository.getbyEmail(email);
     }
 }

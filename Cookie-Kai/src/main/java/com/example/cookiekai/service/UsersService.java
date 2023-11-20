@@ -8,11 +8,11 @@ import java.util.List;
 public interface UsersService {
     Page<Users> pageUser(Integer pageNo);
 
-    Users addUser(Users users);
+    Users addOrUpdateUser(Users users);
 
     void deleteUser(Integer usersId);
 
-    Users updateUser(Users users);
+    Users updateAccount(Users users);
 
     List<Users> listUser();
 
@@ -21,4 +21,6 @@ public interface UsersService {
 //    Page<Users> searchListUser(String text);
 
     Boolean isUnique(String email);
+
+    Users getByEmail(String email);
 }

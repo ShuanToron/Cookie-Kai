@@ -15,4 +15,7 @@ public interface UsersRepository extends JpaRepository<Users, Integer> {
 
     @Query(value = "select * from users where email=?1 or phoneNumber=?1", nativeQuery = true)
     Users searchDuplicate(String email);
+
+    @Query(value = "select * from users where email=?1", nativeQuery = true)
+    Users getbyEmail(String email);
 }

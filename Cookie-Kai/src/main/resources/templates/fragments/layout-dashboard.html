@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html dir="ltr" lang="en"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
 
 <head>
     <meta charset="utf-8">
@@ -99,90 +100,87 @@
                             <img th:src="@{/dashboard/assets/images/users/profile-pic.jpg}" alt="user"
                                  class="rounded-circle"
                                  width="40">
-                            <span class="ms-2 d-none d-lg-inline-block"><span>Hello,</span> <span
-                                    class="text-dark">Jason Doe</span> <i data-feather="chevron-down"
-                                                                          class="svg-icon"></i></span>
+                            <span class="ms-2 d-none d-lg-inline-block">
+                                <span>Hello,</span>
+                                <span class="text-dark">Cookie Kai</span>
+                                <i data-feather="chevron-down" class="svg-icon"></i>
+                            </span>
                         </a>
                         <div class="dropdown-menu dropdown-menu-end dropdown-menu-right user-dd animated flipInY">
-                            <a class="dropdown-item" href="javascript:void(0)"><i data-feather="user"
-                                                                                  class="svg-icon me-2 ms-1"></i>
+                            <a class="dropdown-item" th:href="@{/admin/account}"><i data-feather="user"
+                                                                                    class="svg-icon me-2 ms-1"></i>
                                 My Profile</a>
                             <a class="dropdown-item" href="javascript:void(0)"><i data-feather="credit-card"
                                                                                   class="svg-icon me-2 ms-1"></i>
                                 My Balance</a>
-                            <a class="dropdown-item" href="javascript:void(0)"><i data-feather="mail"
-                                                                                  class="svg-icon me-2 ms-1"></i>
-                                Inbox</a>
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="javascript:void(0)"><i data-feather="settings"
                                                                                   class="svg-icon me-2 ms-1"></i>
                                 Account Setting</a>
                             <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="javascript:void(0)"><i data-feather="power"
-                                                                                  class="svg-icon me-2 ms-1"></i>
-                                Logout</a>
-                            <div class="dropdown-divider"></div>
-                            <div class="pl-4 p-3"><a href="javascript:void(0)" class="btn btn-sm btn-info">View
-                                Profile</a></div>
+                            <a class="dropdown-item">
+                                <button type="button"
+                                        id="logoutLink"
+                                        class="svg-icon me-2 ms-1">Logout
+                                </button>
+                            </a>
                         </div>
                     </li>
                 </ul>
             </div>
         </nav>
     </header>
+    <form th:action="@{/logout}" method="post" th:hidden="true" name="logoutForm">
+        <input type="submit">
+    </form>
     <aside class="left-sidebar" data-sidebarbg="skin6">
         <!-- Sidebar scroll-->
         <div class="scroll-sidebar" data-sidebarbg="skin6">
             <!-- Sidebar navigation-->
             <nav class="sidebar-nav">
                 <ul id="sidebarnav">
-                    <li class="sidebar-item"><a class="sidebar-link" href="/admin/ban-hang-tai-quay"
-                                                aria-expanded="false"><i data-feather="shopping-bag"
-                                                                         class="feather-icon"></i><span
+                    <li class="sidebar-item" sec:authorize="hasAnyAuthority('Admin','Saleperson')"><a
+                            class="sidebar-link" th:href="@{/dashboard/ban-hang-tai-quay}"
+                            aria-expanded="false"><i data-feather="shopping-bag"
+                                                     class="feather-icon"></i><span
                             class="hide-menu">Bán Hàng
                                         </span></a>
                     </li>
                     <li class="list-divider"></li>
-                    <li class="nav-small-cap"><span class="hide-menu">Hệ Thống Quản Lý</span></li>
-
-                    <li class="sidebar-item"><a class="sidebar-link" href="#"
-                                                aria-expanded="false"><i data-feather="tag"
-                                                                         class="feather-icon"></i><span
-                            class="hide-menu">Thu Chi
-                                </span></a>
-                    </li>
-                    <li class="sidebar-item"><a class="sidebar-link sidebar-link" href="/admin/psg/hoa-don/hien-thi"
-                                                aria-expanded="false"><i data-feather="file-text"
-                                                                         class="feather-icon"></i><span
-                            class="hide-menu">Hóa Đơn</span></a></li>
-                    <li class="sidebar-item"><a class="sidebar-link sidebar-link"
-                                                href="/admin/psg/voucher-thu-hang/hien-thi"
-                                                aria-expanded="false"><i data-feather="percent"
-                                                                         class="feather-icon"></i><span
-                            class="hide-menu">Voucher</span></a></li>
-                    <li class="sidebar-item"><a class="sidebar-link sidebar-link" href="/admin/psg/thu-hang/hien-thi"
-                                                aria-expanded="false"><i data-feather="award"
-                                                                         class="feather-icon"></i><span
-                            class="hide-menu">Thứ Hạng</span></a></li>
-                    <li class="sidebar-item"><a class="sidebar-link sidebar-link" href="/admin/psg/quy-dinh/hien-thi"
-                                                aria-expanded="false"><i data-feather="mail"
-                                                                         class="feather-icon"></i><span
-                            class="hide-menu">Quy định</span></a></li>
-                    <li class="sidebar-item"><a class="sidebar-link has-arrow" href="javascript:void(0)"
-                                                aria-expanded="false"><i data-feather="users"
-                                                                         class="feather-icon"></i><span
-                            class="hide-menu">Tài Khoản </span></a>
+                    <li class="nav-small-cap">
+                        <span class="hide-menu">Hệ Thống Quản Lý</span></li>
+                    <li class="sidebar-item" sec:authorize="hasAuthority('Admin')"><a class="sidebar-link sidebar-link"
+                                                                                      th:href="@{/dashboard/orders}"
+                                                                                      aria-expanded="false"><i
+                            data-feather="file-text"
+                            class="feather-icon"></i><span
+                            class="hide-menu">Orders</span></a></li>
+                    <li class="sidebar-item" sec:authorize="hasAnyAuthority('Admin','Editor')"><a
+                            class="sidebar-link sidebar-link"
+                            th:href="@{/dashboard/voucher}"
+                            aria-expanded="false"><i data-feather="percent"
+                                                     class="feather-icon"></i><span
+                            class="hide-menu">Vouchers</span></a></li>
+                    <li class="sidebar-item" sec:authorize="hasAuthority('Admin')"><a class="sidebar-link has-arrow"
+                                                                                      href="javascript:void(0)"
+                                                                                      aria-expanded="false"><i
+                            data-feather="users"
+                            class="feather-icon"></i><span
+                            class="hide-menu">Account</span></a>
                         <ul aria-expanded="false" class="collapse  first-level base-level-line">
-                            <li class="sidebar-item"><a href="/admin/psg/nhan-vien/hien-thi" class="sidebar-link"><span
-                                    class="hide-menu"> Nhân Viên
+                            <li class="sidebar-item"><a
+                                    th:href="@{/dashboard/users}" class="sidebar-link"><span
+                                    class="hide-menu"> Users
                                         </span></a>
                             </li>
-                            <li class="sidebar-item"><a href="/admin/psg/khach-hang/hien-thi" class="sidebar-link"><span
-                                    class="hide-menu"> Khách Hàng
+                            <li class="sidebar-item"><a
+                                    th:href="@{/dashboard/customer}" class="sidebar-link"><span
+                                    class="hide-menu"> Customers
                                         </span></a>
                             </li>
-                            <li class="sidebar-item"><a href="/admin/psg/vai-tro/hien-thi" class="sidebar-link"><span
-                                    class="hide-menu"> Vai trò
+                            <li class="sidebar-item"><a
+                                    th:href="@{/dashboard/roles}" class="sidebar-link"><span
+                                    class="hide-menu"> Roles
                                         </span></a>
                             </li>
                         </ul>
@@ -190,84 +188,69 @@
                     <li class="sidebar-item"><a class="sidebar-link has-arrow" href="javascript:void(0)"
                                                 aria-expanded="false"><i data-feather="grid"
                                                                          class="feather-icon"></i><span
-                            class="hide-menu">Sản Phẩm</span></a>
+                            class="hide-menu">Products</span></a>
                         <ul aria-expanded="false" class="collapse  first-level base-level-line">
-                            <li class="sidebar-item"><a href="/admin/psg/chi-tiet-san-pham/hien-thi"
-                                                        class="sidebar-link"><span
-                                    class="hide-menu"> Sản Phẩm
+                            <li class="sidebar-item" sec:authorize="hasAnyAuthority('Admin','Editor')"><a
+                                    th:href="@{/dashboard/product-detail}"
+                                    class="sidebar-link"><span
+                                    class="hide-menu"> Product Details
                                         </span></a>
                             </li>
-                            <li class="sidebar-item"><a href="/admin/psg/cong-nghe/hien-thi" class="sidebar-link"><span
-                                    class="hide-menu"> Công Nghệ
+                            <li class="sidebar-item" sec:authorize="hasAnyAuthority('Admin','Editor')"><a
+                                    th:href="@{/dashboard/color}" class="sidebar-link"><span
+                                    class="hide-menu"> Colors
                                         </span></a>
                             </li>
-                            <li class="sidebar-item"><a href="/admin/psg/kich-thuoc/hien-thi" class="sidebar-link"><span
-                                    class="hide-menu"> Kích Thước
+                            <li class="sidebar-item" sec:authorize="hasAnyAuthority('Admin','Editor')"><a
+                                    th:href="@{/dashboard/size}"
+                                    class="sidebar-link"><span
+                                    class="hide-menu"> Sizes
                                         </span></a>
                             </li>
-                            <li class="sidebar-item"><a href="/admin/psg/mau-sac/hien-thi" class="sidebar-link"><span
+                            <li class="sidebar-item" sec:authorize="hasAnyAuthority('Admin','Editor')"><a
+                                    th:href="@{/dashboard/brand}"
+                                    class="sidebar-link"><span
                                     class="hide-menu">
-                                            Màu Sắc
+                                            Brands
                                         </span></a>
                             </li>
-                            <li class="sidebar-item"><a href="/admin/psg/thuong-hieu/hien-thi"
-                                                        class="sidebar-link"><span
+                            <li class="sidebar-item" sec:authorize="hasAnyAuthority('Admin','Editor')"><a
+                                    th:href="@{/dashboard/category}"
+                                    class="sidebar-link"><span
                                     class="hide-menu">
-                                            Thương Hiệu
+                                         Categories
                                         </span></a>
                             </li>
-                            <li class="sidebar-item"><a href="/admin/psg/cau-thu/hien-thi" class="sidebar-link"><span
+                            <li class="sidebar-item" sec:authorize="hasAnyAuthority('Admin','Editor')"><a
+                                    th:href="@{/dashboard/line-up}"
+                                    class="sidebar-link"><span
                                     class="hide-menu">
-                                         Cầu thủ
+                                         Product LineUp
                                         </span></a>
                             </li>
-                            <!--                            <li class="sidebar-item"><a href="#" class="sidebar-link"><span-->
-                            <!--                                    class="hide-menu">-->
-                            <!--                                         Ảnh-->
-                            <!--                                        </span></a>-->
-                            <!--                            </li>-->
-                            <li class="sidebar-item"><a href="/admin/psg/dong-san-pham/hien-thi"
-                                                        class="sidebar-link"><span
+                            <li class="sidebar-item" sec:authorize="hasAnyAuthority('Admin','Editor')"><a
+                                    th:href="@{/dashboard/material}"
+                                    class="sidebar-link"><span
                                     class="hide-menu">
-                                         Dòng Sản Phẩm
+                                         Matetials
                                         </span></a>
                             </li>
-                            <li class="sidebar-item"><a href="/admin/psg/loai-san-pham/hien-thi"
-                                                        class="sidebar-link"><span
+                            <li class="sidebar-item" sec:authorize="hasAnyAuthority('Admin','Editor')"><a
+                                    th:href="@{/dashboard/sole}" class="sidebar-link"><span
                                     class="hide-menu">
-                                         Loại Sản Phẩm
-                                        </span></a>
-                            </li>
-                            <li class="sidebar-item"><a href="/admin/psg/nuoc-san-xuat/hien-thi"
-                                                        class="sidebar-link"><span
-                                    class="hide-menu">
-                                        Nước sản Xuất
-                                        </span></a>
-                            </li>
-                            <li class="sidebar-item"><a href="/admin/psg/chat-lieu/hien-thi" class="sidebar-link"><span
-                                    class="hide-menu">
-                                         Chất Liệu
-                                        </span></a>
-                            </li>
-                            <li class="sidebar-item"><a href="/admin/psg/nha-san-xuat/hien-thi"
-                                                        class="sidebar-link"><span
-                                    class="hide-menu">
-                                        Nhà Sản Xuất
-                                        </span></a>
-                            </li>
-                            <li class="sidebar-item"><a href="/admin/psg/co-ao/hien-thi" class="sidebar-link"><span
-                                    class="hide-menu">
-                                        Cổ Áo
+                                        Sole Type
                                         </span></a>
                             </li>
                         </ul>
                     </li>
                     <li class="list-divider"></li>
                     <li class="nav-small-cap"><span class="hide-menu">Thống Kê</span></li>
-                    <li class="sidebar-item"><a class="sidebar-link sidebar-link" href="#"
-                                                aria-expanded="false"><i data-feather="trending-up"
-                                                                         class="feather-icon"></i><span
-                            class="hide-menu">Thống Kê
+                    <li class="sidebar-item" sec:authorize="hasAuthority('Admin')"><a class="sidebar-link sidebar-link"
+                                                                                      th:href="@{/dashboard/report}"
+                                                                                      aria-expanded="false"><i
+                            data-feather="trending-up"
+                            class="feather-icon"></i><span
+                            class="hide-menu">Report
                                 </span></a>
                     </li>
                 </ul>
@@ -288,22 +271,6 @@
         </footer>
     </div>
 </div>
-<!--<script th:if="${message}" th:inline="javascript">-->
-<!--    /*<![CDATA[*/-->
-<!--    window.addEventListener('DOMContentLoaded', function () {-->
-<!--        var message = /*[[${successMessage}]]*/ '';-->
-<!--        if (message) {-->
-<!--            // alert(successMessage);-->
-<!--            swal({-->
-<!--                title: "Cookie Kai said!",-->
-<!--                text: message,-->
-<!--                icon: "success",-->
-<!--            });-->
-<!--        }-->
-<!--    });-->
-<!--    /*]]>*/-->
-<!--</script>-->
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.26.1/axios.min.js"
         integrity="sha512-bPh3uwgU5qEMipS/VOmRqynnMXGGSRv+72H/N260MQeXZIK4PG48401Bsby9Nq5P5fz7hy5UGNmC/W1Z51h2GQ=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -367,18 +334,9 @@
     }
 </script>
 <script th:inline="javascript">
-    const maxImages = 5;
-
     document.getElementById('filesAnhSanPham').addEventListener('change', function () {
         const previewImagesContainer = document.getElementById('previewImages');
         previewImagesContainer.innerHTML = '';
-
-        if (this.files.length > maxImages) {
-            alert('You can only upload ' + maxImages + ' images at a time.');
-            this.value = '';
-            return;
-        }
-
         for (let i = 0; i < this.files.length; i++) {
             const reader = new FileReader();
             reader.onloadend = function () {
@@ -414,8 +372,14 @@
         }
     }
 </script>
-
-
+<script th:inline="javascript">
+    $(document).ready(function () {
+        $("#logoutLink").on("click", function (e) {
+            e.preventDefault();
+            document.logoutForm.submit();
+        })
+    })
+</script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
         integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
         crossorigin="anonymous"></script>
