@@ -28,23 +28,33 @@ import java.io.IOException;
 import java.util.List;
 
 @Controller
-@RequestMapping("/admin/users")
 public class UsersController {
     @Autowired
     private UsersServiceImpl usersService;
     @Autowired
     private RolesServiceImpl rolesService;
 
-    @GetMapping("")
-    public String viewNhanVien(Model model, @RequestParam(name = "pageNo", defaultValue = "0") Integer pageNo) {
-        Page<Users> usersPage = usersService.pageUser(pageNo);
-        model.addAttribute("user", usersPage);
+    @GetMapping("/dashboard/users")
+    public String viewNhanVien(Model model) {
+        return listPage(0, "id", "asc", null, model);
+    }
+
+    @GetMapping("/dashboard/users/page/{pageNo}")
+    public String listPage(@PathVariable("pageNo") Integer pageNo, @RequestParam("sortField") String sortField, @RequestParam("sortType") String sortType, @RequestParam("keyword") String keyWord, Model model) {
+        Page<Users> page = usersService.pageUser(pageNo, sortField, sortType, keyWord);
+        String revertType = sortType.equals("asc") ? "desc" : "asc";
+        model.addAttribute("user", page.getContent());
         model.addAttribute("currentPage", pageNo);
-        model.addAttribute("totalPages", usersPage.getTotalPages());
+        model.addAttribute("totalPages", page.getTotalPages());
+        model.addAttribute("totalItems", page.getTotalElements());
+        model.addAttribute("sortField", sortField);
+        model.addAttribute("sortType", sortType);
+        model.addAttribute("sortRevert", revertType);
+        model.addAttribute("keyWord", keyWord);
         return "dashboard/nhan-vien/trang-chu-nhan-vien";
     }
 
-    @PostMapping("/save")
+    @PostMapping("/dashboard/users/save")
     public String saveNhanVien(@Valid @ModelAttribute("user") Users users, BindingResult result, Model model, @RequestParam("image") MultipartFile file, HttpSession session) throws IOException {
         if (result.hasErrors()) {
             model.addAttribute("roleList", rolesService.listRoles());
@@ -58,24 +68,24 @@ public class UsersController {
             FileUploadUtil.saveFile(uploadDirectory, fileName, file);
         }
         session.setAttribute("message", "Save user successfully");
-        return "redirect:/admin/users";
+        return "redirect:/dashboard/users";
     }
 
-    @GetMapping("/new")
+    @GetMapping("/dashboard/users/new")
     public String viewAddNhanVien(Model model) {
         model.addAttribute("user", new Users());
         model.addAttribute("roleList", rolesService.listRoles());
         return "dashboard/nhan-vien/view-add-nhan-vien";
     }
 
-    @GetMapping("/detail/{id}")
+    @GetMapping("/dashboard/users/detail/{id}")
     public String detailNhanVien(Model model, @PathVariable("id") Integer id) {
         model.addAttribute("user", usersService.getOne(id));
         model.addAttribute("roleList", rolesService.listRoles());
         return "dashboard/nhan-vien/view-update-nhan-vien";
     }
 
-    @PostMapping("/update/{id}")
+    @PostMapping("/dashboard/users/update/{id}")
     public String updateNhanVien(@Valid @ModelAttribute("user") Users users, BindingResult result, Model model, @RequestParam("image") MultipartFile file, HttpSession session) throws IOException {
         if (result.hasErrors()) {
             model.addAttribute("roleList", rolesService.listRoles());
@@ -92,23 +102,30 @@ public class UsersController {
             usersService.addOrUpdateUser(users);
         }
         session.setAttribute("message", "Save user successfully");
-        return "redirect:/admin/users";
+        return "redirect:/dashboard/users";
     }
 
-    @GetMapping("/delete/{id}")
+    @GetMapping("/dashboard/users/delete/{id}")
     public String deleteNhanVien(@PathVariable("id") Integer id) throws IOException {
         Users usersDelete = usersService.getOne(id);
         String uploadDirectory = "user-photos/" + usersDelete.getId();
         FileUploadUtil.cleanDirectory(uploadDirectory);
         usersService.deleteUser(id);
-        return "redirect:/admin/users";
+        return "redirect:/dashboard/users";
     }
 
-    @GetMapping("/export/excel")
+    @GetMapping("/dashboard/users/export/excel")
     public void exportToExcel(HttpServletResponse response) throws IOException {
         List<Users> list = usersService.listUser();
         list.forEach(s -> System.out.println(s.getId()));
         UserExcelExporter exporter = new UserExcelExporter();
         exporter.exportExcel(list, response);
+    }
+
+    @GetMapping("/dashboard/users/{id}/enabled/{status}")
+    public String updateEnableStatus(@PathVariable("id") String id, @PathVariable("status") Boolean status) {
+        Integer ids = Integer.parseInt(id);
+        usersService.updateEnableUser(status, ids);
+        return "redirect:/dashboard/users";
     }
 }

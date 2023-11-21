@@ -3,10 +3,12 @@ package com.example.cookiekai.service.impl;
 import com.example.cookiekai.entity.Users;
 import com.example.cookiekai.repository.UsersRepository;
 import com.example.cookiekai.service.UsersService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@Transactional
 public class UsersServiceImpl implements UsersService {
     @Autowired
     private UsersRepository usersRepository;
@@ -22,8 +25,13 @@ public class UsersServiceImpl implements UsersService {
     private PasswordEncoder encoder;
 
     @Override
-    public Page<Users> pageUser(Integer pageNo) {
-        Pageable pageable = PageRequest.of(pageNo, 5);
+    public Page<Users> pageUser(Integer pageNo, String sortField, String sortType, String keyWord) {
+        Sort sort = Sort.by(sortField);
+        sort = sortType.equals("asc") ? sort.ascending() : sort.descending();
+        Pageable pageable = PageRequest.of(pageNo, 5, sort);
+        if (keyWord != null) {
+            return usersRepository.find(keyWord, pageable);
+        }
         return usersRepository.findAll(pageable);
     }
 
@@ -83,5 +91,10 @@ public class UsersServiceImpl implements UsersService {
     @Override
     public Users getByEmail(String email) {
         return usersRepository.getbyEmail(email);
+    }
+
+    @Override
+    public void updateEnableUser(Boolean status, Integer id) {
+        usersRepository.updateEnableUser(status, id);
     }
 }

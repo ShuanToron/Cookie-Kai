@@ -49,7 +49,7 @@
         <div class="card-body">
             <h2 class="text-center mb-4">Update user</h2>
 
-            <form th:action="@{/admin/account/update}" th:object="${user}" method="post"
+            <form th:action="@{/dashboard/account/update}" th:object="${user}" method="post"
                   enctype="multipart/form-data"
                   onsubmit="return confirm('Do you want to update account?')">
                 <div class="row">

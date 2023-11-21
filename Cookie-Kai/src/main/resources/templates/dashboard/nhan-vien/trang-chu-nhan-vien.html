@@ -36,15 +36,17 @@
                 <a class="nav-link" href="javascript:void(0)">
                     <nav class="navbar bg-body">
                         <div class="container-fluid">
-                            <form class="d-flex" role="search" action="/admin/users/search"
+                            <form class="d-flex" role="search" th:action="@{/dashboard/users/page/1}"
                                   method="get">
-                                <input name="search" class="form-control custom-shadow custom-radius border-0 bg-white"
-                                       style="width: 350px;" type="search"
+                                <input name="keyword" class="form-control custom-shadow custom-radius border-0 bg-white"
+                                       style="width: 350px;" type="search" th:value="${keyWord}"
                                        placeholder="Find by email, fullname..." aria-label="Search">
+                                <input type="hidden" name="sortField" th:value="${sortField}">
+                                <input type="hidden" name="sortType" th:value="${sortType}">
                                 <button class="btn btn-rounded btn-primary" style="width: 100px" type="submit">Search
                                 </button>
                             </form>
-                            <a th:href="@{/admin/users/export/excel}"
+                            <a th:href="@{/dashboard/users/export/excel}"
                                class="btn waves-effect waves-light btn-rounded btn-primary">Export to
                                 Excel
                             </a>
@@ -62,20 +64,84 @@
                     <table class="table">
                         <thead>
                         <tr>
-                            <th scope="col">STT</th>
+                            <th scope="col">
+                                <a th:if="${sortField!='id'}"
+                                   th:href="@{'/dashboard/users/page/'+${currentPage}+'?sortField=id&sortType='+${sortType}}">
+                                    ID
+                                </a>
+                                <a th:if="${sortField=='id'}"
+                                   th:href="@{'/dashboard/users/page/'+${currentPage}+'?sortField=id&sortType='+${sortRevert}}">
+                                    ID
+                                </a>
+                                <span th:if="${sortField=='id'}"
+                                      th:class="${sortType=='asc'?'fas fa-sort-up':'fas fa-sort-down'}"></span>
+                            </th>
                             <th scope="col">Photo</th>
-                            <th scope="col">Fullname</th>
-                            <th scope="col">Gender</th>
-                            <th scope="col">Date of birth</th>
-                            <th scope="col">Email</th>
-                            <th scope="col">Status</th>
-                            <th scope="col">Role</th>
+                            <th scope="col">
+                                <a th:if="${sortField!='fullname'}"
+                                   th:href="@{'/dashboard/users/page/'+${currentPage}+'?sortField=fullname&sortType='+${sortType}}">
+                                    Fullname
+                                </a>
+                                <a th:if="${sortField=='fullname'}"
+                                   th:href="@{'/dashboard/users/page/'+${currentPage}+'?sortField=fullname&sortType='+${sortRevert}}">
+                                    Fullname
+                                </a>
+                                <span th:if="${sortField=='fullname'}"
+                                      th:class="${sortType=='asc'?'fas fa-sort-up':'fas fa-sort-down'}"></span>
+                            </th>
+                            <th scope="col">
+                                <a th:if="${sortField!='gender'}"
+                                   th:href="@{'/dashboard/users/page/'+${currentPage}+'?sortField=gender&sortType='+${sortType}}">
+                                    Gender
+                                </a>
+                                <a th:if="${sortField=='gender'}"
+                                   th:href="@{'/dashboard/users/page/'+${currentPage}+'?sortField=gender&sortType='+${sortRevert}}">
+                                    Gender
+                                </a>
+                                <span th:if="${sortField=='gender'}"
+                                      th:class="${sortType=='asc'?'fas fa-sort-up':'fas fa-sort-down'}"></span>
+                            </th>
+                            <th scope="col">
+                                <a th:if="${sortField!='email'}"
+                                   th:href="@{'/dashboard/users/page/'+${currentPage}+'?sortField=email&sortType='+${sortType}}">
+                                    Email
+                                </a>
+                                <a th:if="${sortField=='email'}"
+                                   th:href="@{'/dashboard/users/page/'+${currentPage}+'?sortField=email&sortType='+${sortRevert}}">
+                                    Email
+                                </a>
+                                <span th:if="${sortField=='email'}"
+                                      th:class="${sortType=='asc'?'fas fa-sort-up':'fas fa-sort-down'}"></span>
+                            </th>
+                            <th scope="col">
+                                <a th:if="${sortField!='enabled'}"
+                                   th:href="@{'/dashboard/users/page/'+${currentPage}+'?sortField=enabled&sortType='+${sortType}}">
+                                    Status
+                                </a>
+                                <a th:if="${sortField=='enabled'}"
+                                   th:href="@{'/dashboard/users/page/'+${currentPage}+'?sortField=enabled&sortType='+${sortRevert}}">
+                                    Status
+                                </a>
+                                <span th:if="${sortField=='enabled'}"
+                                      th:class="${sortType=='asc'?'fas fa-sort-up':'fas fa-sort-down'}"></span>
+                            </th>
+                            <th scope="col">
+                                <a th:if="${sortField!='roles'}"
+                                   th:href="@{'/dashboard/users/page/'+${currentPage}+'?sortField=roles&sortType='+${sortType}}">
+                                    Role
+                                </a>
+                                <a th:if="${sortField=='roles'}"
+                                   th:href="@{'/dashboard/users/page/'+${currentPage}+'?sortField=roles&sortType='+${sortRevert}}">
+                                    Role
+                                </a>
+                                <span th:if="${sortField=='roles'}"
+                                      th:class="${sortType=='asc'?'fas fa-sort-up':'fas fa-sort-down'}"></span></th>
                             <th scope="col">Action</th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr th:each="tk,index:${user}">
-                            <td th:text="${index.count}"></td>
+                        <tr th:each="tk:${user}">
+                            <td th:text="${tk.id}"></td>
                             <td>
                                 <div class="symbol symbol-circle overflow-hidden me-3">
                                     <div class="symbol-label">
@@ -89,20 +155,25 @@
                             </td>
                             <td th:text="${tk.fullname}"></td>
                             <td th:text="${tk.gender==true ? 'Nam':'Nữ'}"></td>
-                            <td th:text="${#temporals.format(tk.birthday, 'dd/MM/yyyy')}"></td>
                             <td th:text="${tk.email}"></td>
+                            <!--                            <td th:text="${#temporals.format(tk.birthday, 'dd/MM/yyyy')}"></td>-->
                             <td>
-                                <div class="badge badge-light-success fw-bold">
-                                    <span th:text="${tk.enabled==true ? 'Enable':'Disable'}"></span>
-                                </div>
+                                <a th:if="${tk.enabled==true}" class="fa-regular fa-circle-check fa-xl"
+                                   style="color: #0aff54;"
+                                   th:href="@{'/dashboard/users/'+${tk.id}+'/enabled/false'}" title="Disable this user">
+                                </a>
+                                <a th:if="${tk.enabled==false}" class="fa-regular fa-circle-xmark fa-xl"
+                                   style="color: #ff2e2e;"
+                                   th:href="@{'/dashboard/users/'+${tk.id}+'/enabled/true'}" title="Enable this user">
+                                </a>
                             </td>
                             <td th:text="${tk.roles.name}"></td>
                             <td>
                                  <span>
-                                        <a th:href="@{/admin/users/detail/{id}(id=${tk.id})}"
+                                        <a th:href="@{/dashboard/users/detail/{id}(id=${tk.id})}"
                                            class="btn waves-effect waves-light btn-rounded btn-warning"
                                         ><i data-feather="edit" class="feather-icon"></i></a>
-                                         <a th:href="@{/admin/users/delete/{id}(id=${tk.id})}">
+                                         <a th:href="@{/dashboard/users/delete/{id}(id=${tk.id})}">
                                            <button type="submit"
                                                    class="btn waves-effect waves-light btn-rounded btn-danger"
                                                    onclick="return confirm('Do you want to delete this user?')"><i
@@ -115,23 +186,27 @@
                         </tr>
                         </tbody>
                     </table>
-                    <nav aria-label="Page navigation example">
-                        <ul class="pagination">
-                            <li class="page-item" th:if="${currentPage !=0}">
-                                <a class="page-link"
-                                   th:href="@{'/admin/users/pageNo/'+${ currentPage - 1}}">Previous</a>
-                            </li>
-                            <li class="page-item" th:each="i: ${#numbers.sequence(1,totalPages)}"
-                                th:classappend="${currentPage == i - 1 ? 'active' : ''}">
-                                <a class="page-link" th:href="@{'/admin/users/pageNo/'+${i - 1}}">
-                                    <span th:text="${i}"></span>
-                                </a>
-                            </li>
-                            <li class="page-item" th:if="${currentPage + 1 != totalPages}">
-                                <a class="page-link" th:href="@{'/admin/users/pageNo/'+${currentPage + 1}}">Next</a>
-                            </li>
-                        </ul>
-                    </nav>
+                    <div th:if="${totalPages>0}">
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination">
+                                <li class="page-item" th:if="${currentPage !=0}">
+                                    <a class="page-link"
+                                       th:href="@{'/dashboard/users/page/'+${ currentPage - 1}+ '?sortField=' + ${sortField} + '&sortType=' + ${sortType}}">Previous</a>
+                                </li>
+                                <li class="page-item" th:each="i: ${#numbers.sequence(1,totalPages)}"
+                                    th:classappend="${currentPage == i - 1 ? 'active' : ''}">
+                                    <a class="page-link"
+                                       th:href="@{'/dashboard/users/page/'+${i - 1}+ '?sortField=' + ${sortField} + '&sortType=' + ${sortType}}">
+                                        <span th:text="${i}"></span>
+                                    </a>
+                                </li>
+                                <li class="page-item" th:if="${currentPage + 1 != totalPages}">
+                                    <a class="page-link"
+                                       th:href="@{'/dashboard/users/page/'+${currentPage + 1}+ '?sortField=' + ${sortField} + '&sortType=' + ${sortType}}">Next</a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
                 </div>
             </div>
         </div> <!-- end card-body-->
