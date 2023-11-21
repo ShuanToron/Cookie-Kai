@@ -6,7 +6,7 @@ import org.springframework.data.domain.Page;
 import java.util.List;
 
 public interface UsersService {
-    Page<Users> pageUser(Integer pageNo);
+    Page<Users> pageUser(Integer pageNo, String sortField, String sortType, String keyWord);
 
     Users addOrUpdateUser(Users users);
 
@@ -18,9 +18,9 @@ public interface UsersService {
 
     Users getOne(Integer id);
 
-//    Page<Users> searchListUser(String text);
-
     Boolean isUnique(String email);
 
     Users getByEmail(String email);
+
+    void updateEnableUser(Boolean status, Integer id);
 }

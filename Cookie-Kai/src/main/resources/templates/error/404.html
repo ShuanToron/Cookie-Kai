@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html dir="ltr" lang="en"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity6">
-
 <head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html">
@@ -27,6 +25,7 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 </head>
+
 <body>
 <div class="preloader">
     <div class="lds-ripple">
@@ -97,10 +96,9 @@
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="javascript:void(0)" data-bs-toggle="dropdown"
                            aria-haspopup="true" aria-expanded="false">
-<!--                            <img th:src="@{/dashboard/assets/images/users/profile-pic.jpg}" alt="user"-->
-<!--                                 class="rounded-circle"-->
-<!--                                 width="40">-->
-                            <i class="fa-regular fa-user fa-lg"></i>
+                            <img th:src="@{/dashboard/assets/images/users/profile-pic.jpg}" alt="user"
+                                 class="rounded-circle"
+                                 width="40">
                             <span class="ms-2 d-none d-lg-inline-block">
                                 <span>Hello,</span>
                                 <span class="text-dark">Cookie Kai</span>
@@ -108,7 +106,7 @@
                             </span>
                         </a>
                         <div class="dropdown-menu dropdown-menu-end dropdown-menu-right user-dd animated flipInY">
-                            <a class="dropdown-item" th:href="@{/dashboard/account}"><i data-feather="user"
+                            <a class="dropdown-item" th:href="@{/admin/account}"><i data-feather="user"
                                                                                     class="svg-icon me-2 ms-1"></i>
                                 My Profile</a>
                             <a class="dropdown-item" href="javascript:void(0)"><i data-feather="credit-card"
@@ -169,17 +167,17 @@
                             class="feather-icon"></i><span
                             class="hide-menu">Account</span></a>
                         <ul aria-expanded="false" class="collapse  first-level base-level-line">
-                            <li class="sidebar-item" sec:authorize="hasAuthority('Admin')"><a
+                            <li class="sidebar-item"><a
                                     th:href="@{/dashboard/users}" class="sidebar-link"><span
                                     class="hide-menu"> Users
                                         </span></a>
                             </li>
-                            <li class="sidebar-item" sec:authorize="hasAuthority('Admin')"><a
+                            <li class="sidebar-item"><a
                                     th:href="@{/dashboard/customer}" class="sidebar-link"><span
                                     class="hide-menu"> Customers
                                         </span></a>
                             </li>
-                            <li class="sidebar-item" sec:authorize="hasAuthority('Admin')"><a
+                            <li class="sidebar-item"><a
                                     th:href="@{/dashboard/roles}" class="sidebar-link"><span
                                     class="hide-menu"> Roles
                                         </span></a>
@@ -262,9 +260,16 @@
     </aside>
     <div class="page-wrapper">
         <div class="container-fluid">
-            <section layout:fragment="content">
-                <p>This is filled by the content template.</p>
-            </section>
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title fw-semibold mb-4">Sorry, the requested page couldn't be found</h2>
+                    <div class="card">
+                        <div class="card-body p-4">
+                            <h4>Status code: 404</h4>
+                        </div>
+                    </div>
+                </div> <!-- end card-body-->
+            </div>
         </div>
         <footer class="footer text-center text-muted">
             All Rights Reserved by Freedash. Designed and Developed by <a
@@ -272,107 +277,6 @@
         </footer>
     </div>
 </div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.26.1/axios.min.js"
-        integrity="sha512-bPh3uwgU5qEMipS/VOmRqynnMXGGSRv+72H/N260MQeXZIK4PG48401Bsby9Nq5P5fz7hy5UGNmC/W1Z51h2GQ=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script th:inline="javascript">
-
-    const host = "https://provinces.open-api.vn/api/";
-    var callAPI = (api) => {
-        return axios.get(api)
-            .then((response) => {
-                renderData(response.data, "province");
-            });
-    }
-    callAPI('https://provinces.open-api.vn/api/?depth=1');
-    var callApiDistrict = (api) => {
-        return axios.get(api)
-            .then((response) => {
-                renderData(response.data.districts, "district");
-            });
-    }
-    var callApiWard = (api) => {
-        return axios.get(api)
-            .then((response) => {
-                renderData(response.data.wards, "ward");
-            });
-    }
-    var renderData = (array, select) => {
-        let row = '';
-        array.forEach(element => {
-            row += `<option value="${element.code}">${element.name}</option>`;
-        });
-        document.querySelector("#" + select).innerHTML = row;
-    }
-    $("#province").change(() => {
-        callApiDistrict(host + "p/" + $("#province").val() + "?depth=2");
-        printResult();
-    });
-    $("#district").change(() => {
-        callApiWard(host + "d/" + $("#district").val() + "?depth=2");
-        printResult();
-    });
-    $("#ward").change(() => {
-        printResult();
-    })
-    var printResult = () => {
-        var provinceCode = $("#province").val();
-        var districtCode = $("#district").val();
-        var wardCode = $("#ward").val();
-        var provinceName = $("#province option:selected").text();
-        var districtName = $("#district option:selected").text();
-        var wardName = $("#ward option:selected").text();
-        callApiDistrict(host + "p/" + provinceCode + "?depth=2")
-            .then(() => {
-                $("#district").val(districtCode);
-            });
-        callApiWard(host + "d/" + districtCode + "?depth=2")
-            .then(() => {
-                $("#ward").val(wardCode);
-            });
-        var fullAddress = wardName + ', ' + districtName + ', ' + provinceName;
-        $('#addressInput').val(fullAddress);
-    }
-</script>
-<script th:inline="javascript">
-    document.getElementById('filesAnhSanPham').addEventListener('change', function () {
-        const previewImagesContainer = document.getElementById('previewImages');
-        previewImagesContainer.innerHTML = '';
-        for (let i = 0; i < this.files.length; i++) {
-            const reader = new FileReader();
-            reader.onloadend = function () {
-                const img = document.createElement('img');
-                img.src = reader.result;
-                img.style.marginTop = '20px';
-                img.style.marginRight = '20px';
-                img.style.border = '1px';
-                img.style.borderRadius = '20px';
-                img.style.width = '150px';
-                img.style.height = '150px';
-                previewImagesContainer.appendChild(img);
-            }
-            reader.readAsDataURL(this.files[i]);
-        }
-    });
-</script>
-<script th:inline="javascript">
-    function validateBeforeSubmit() {
-        var checkboxes = document.querySelectorAll('#kichThuocContainer input[type="checkbox"]');
-        var checked = false;
-
-        for (var i = 0; i < checkboxes.length; i++) {
-            if (checkboxes[i].checked) {
-                checked = true;
-                break;
-            }
-        }
-
-        if (!checked) {
-            alert("Vui lòng chọn ít nhất một kích thước trước khi thêm sản phẩm.");
-            return false; // Ngăn form submit
-        }
-    }
-</script>
 <script th:inline="javascript">
     $(document).ready(function () {
         $("#logoutLink").on("click", function (e) {
@@ -384,7 +288,6 @@
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
         integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
         crossorigin="anonymous"></script>
-<script src="https://kit.fontawesome.com/0f9566b59b.js" crossorigin="anonymous"></script>
 <script th:src="@{/dashboard/assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js}"></script>
 <script th:src="@{/dashboard/dist/js/feather.min.js}"></script>
 <script th:src="@{/dashboard/assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js}"></script>
@@ -395,6 +298,5 @@
 <script th:src="@{/dashboard/vendors/dropzone/dropzone.min.js}"></script>
 <script th:src="@{/dashboard/assets/js/phoenix.js}"></script>
 <script th:src="@{/dashboard/assets/js/scripts.bundle.js}"></script>
-
 </body>
 </html>

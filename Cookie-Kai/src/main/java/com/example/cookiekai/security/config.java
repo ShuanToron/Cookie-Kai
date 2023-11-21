@@ -45,18 +45,20 @@ public class config {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(request -> request
+                        .requestMatchers("/cookie-kai/forgot-password").permitAll()
+                        .requestMatchers("/cookie-kai/reset-password").permitAll()
                         .requestMatchers("/dashboard/users/**").hasRole("Admin")
                         .requestMatchers("/dashboard/report/**").hasRole("Admin")
                         .requestMatchers("/dashboard/orders/**").hasRole("Admin")
                         .requestMatchers("/dashboard/customer/**").hasRole("Admin")
                         .requestMatchers("/dashboard/roles/**").hasRole("Admin")
-                        .requestMatchers("/dashboard/roles/**").hasAnyRole("Admin", "Editor")
+                        .requestMatchers("/dashboard/category/**").hasAnyRole("Admin", "Editor")
                         .anyRequest().authenticated())
                 .formLogin(formLogin -> formLogin.
                         loginPage("/cookie-kai/login")
                         .usernameParameter("email")
                         .loginProcessingUrl("/login")
-                        .defaultSuccessUrl("/admin/users", true)
+                        .defaultSuccessUrl("/dashboard/users", true)
                         .permitAll())
                 .logout(logout -> logout
                         .logoutSuccessUrl("/cookie-kai/login")

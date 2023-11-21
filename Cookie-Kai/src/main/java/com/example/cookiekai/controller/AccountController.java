@@ -22,7 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
 @Controller
-@RequestMapping("/admin")
+@RequestMapping("/dashboard")
 public class AccountController {
     @Autowired
     private UsersServiceImpl usersService;
@@ -51,6 +51,6 @@ public class AccountController {
         }
         System.out.println("User form with fullname: " + users.getFullname());
         System.out.println("User form with photo: " + users.getPhotos());
-        return "redirect:/admin/account";
+        return "redirect:/dashboard/account";
     }
 }

@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
-@RequestMapping("/admin/roles")
+@RequestMapping("/dashboard/roles")
 public class RolesController {
     @Autowired
     private RolesServiceImpl rolesService;
@@ -41,6 +41,6 @@ public class RolesController {
             return "dashboard/vai-tro/view-add-vai-tro";
         }
         rolesService.addRoles(roles);
-        return "redirect:/admin/roles";
+        return "redirect:/dashboard/roles";
     }
 }

@@ -11,13 +11,13 @@ public class AuthenticationController {
         return "dashboard/authentication/login";
     }
 
-    @GetMapping("/cookie-kai/register")
+    @GetMapping("/cookie-kai/forgot-password")
     public String viewRegister() {
-        return "dashboard/authentication/register";
+        return "dashboard/authentication/forgot-password";
     }
 
-    @PostMapping("/login")
+    @GetMapping("/cookie-kai/reset-password")
     public String loginAction() {
-        return "redirect:/admin/users";
+        return "dashboard/authentication/reset-password";
     }
 }
